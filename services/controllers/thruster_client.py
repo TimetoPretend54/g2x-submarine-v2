@@ -37,7 +37,11 @@ PRECISION = 3
 AXIS_MAP = None
 
 if platform.system() == "Linux":
-    AXIS_MAP = [0, 1, 2, 4, 5, 3]
+    if platform.release() == "4.13.0-45-generic":
+        pass
+        # AXIS_Map --> fill in later
+    else:
+        AXIS_MAP = [0, 1, 2, 4, 5, 3]
 elif platform.system() == "Windows":
     AXIS_MAP = [0, 1, 2, 3, 5, 4]
 # NOTE that Darwin comes in, in the expected order
