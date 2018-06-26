@@ -48,7 +48,7 @@ elif platform.system() == "Windows":
 
 # This is the IP address and port of the server we will connect to. We send
 # controller values to that machine over the network.
-host = "192.168.0.1"
+host = "192.168.2.1"
 port = 9999
 
 # process command line args
@@ -121,7 +121,15 @@ atexit.register(close_socket)
 # reference to the first controller and initialize it for reading.
 pygame.init()
 pygame.joystick.init()
-stick = pygame.joystick.Joystick(0)
+
+# Enumerate through joysticks to make sure we are using PS4 Controller
+for i in range(0, pygame.joystick.get_count()):
+    if pygame.joystick.Joystick(i).get_name() == 'Sony Computer Entertainment Wireless Controller':
+        stick = pygame.joystick.Joystick(i)
+    else:
+        print('No Sony Computer Entertainment Wireless Controller Connected')
+        exit(0)
+
 stick.init()
 
 # The following flag is used to exit our infinite control reading loop.
