@@ -58,7 +58,7 @@ else:
 
 # This is the IP address and port of the server we will connect to. We send
 # controller values to that machine over the network.
-host = "192.168.0.207"
+host = "192.168.2.1"
 port = 9999
 
 # process command line args
@@ -134,7 +134,6 @@ pygame.joystick.init()
 
 # Enumerate through joysticks to make sure we are using PS4 Controller
 for i in range(0, pygame.joystick.get_count()):
-    print (pygame.joystick.Joystick(i).get_name())
     if pygame.joystick.Joystick(i).get_name() == controller_name:
         stick = pygame.joystick.Joystick(i)
         stick.init()
