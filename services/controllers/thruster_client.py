@@ -30,6 +30,9 @@ import platform
 # thrusters, we may need to increase this value.
 PRECISION = 3
 
+# Boolean to check if controller exists
+controller_exists = 0
+
 # NOTE: For some reason the same controller does not return the same axes
 # numbers on macOS and Raspian, so we adjust these constants per OS so that the
 # server will get consistent axis numbers. This has only been tested on macOS
@@ -37,18 +40,25 @@ PRECISION = 3
 AXIS_MAP = None
 
 if platform.system() == "Linux":
+    controller_name = "Sony Computer Entertainment Wireless Controller"
     if platform.release() == "4.13.0-45-generic":
         pass
         # AXIS_Map --> fill in later
     else:
         AXIS_MAP = [0, 1, 2, 4, 5, 3]
 elif platform.system() == "Windows":
+    controller_name = "Wireless Controller"
     AXIS_MAP = [0, 1, 2, 3, 5, 4]
+else:
+    print(platform.system() + " is not supported")
+    exit(1)
+# TO DO: Need Mac OS Elif before this else statement! Help from Kevin?
+
 # NOTE that Darwin comes in, in the expected order
 
 # This is the IP address and port of the server we will connect to. We send
 # controller values to that machine over the network.
-host = "192.168.2.1"
+host = "192.168.0.207"
 port = 9999
 
 # process command line args
@@ -124,13 +134,15 @@ pygame.joystick.init()
 
 # Enumerate through joysticks to make sure we are using PS4 Controller
 for i in range(0, pygame.joystick.get_count()):
-    if pygame.joystick.Joystick(i).get_name() == 'Sony Computer Entertainment Wireless Controller':
+    print (pygame.joystick.Joystick(i).get_name())
+    if pygame.joystick.Joystick(i).get_name() == controller_name:
         stick = pygame.joystick.Joystick(i)
-    else:
-        print('No Sony Computer Entertainment Wireless Controller Connected')
-        exit(0)
+        stick.init()
+        controller_exists = 1
 
-stick.init()
+if (not controller_exists):
+    print("No " + controller_name + " Connected")
+    exit(1)
 
 # The following flag is used to exit our infinite control reading loop.
 done = False
