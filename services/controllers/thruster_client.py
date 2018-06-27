@@ -49,12 +49,13 @@ if platform.system() == "Linux":
 elif platform.system() == "Windows":
     controller_name = "Wireless Controller"
     AXIS_MAP = [0, 1, 2, 3, 5, 4]
+elif platform.system() == "Darwin":     
+    controller_name = "Wireless Controller"
+    # NOTE that Darwin (macOS) comes in, in the expected order
 else:
     print(platform.system() + " is not supported")
     exit(1)
 # TO DO: Need Mac OS Elif before this else statement! Help from Kevin?
-
-# NOTE that Darwin comes in, in the expected order
 
 # This is the IP address and port of the server we will connect to. We send
 # controller values to that machine over the network.
@@ -132,9 +133,13 @@ atexit.register(close_socket)
 pygame.init()
 pygame.joystick.init()
 
+# Create joystick dictionary
+joysticks = dict()
+
 # Enumerate through joysticks to make sure we are using PS4 Controller
 for i in range(0, pygame.joystick.get_count()):
-    if pygame.joystick.Joystick(i).get_name() == controller_name:
+    joysticks[pygame.joystick.Joystick(i).get_name()] = i
+    if controller_name in joysticks:
         stick = pygame.joystick.Joystick(i)
         stick.init()
         controller_exists = 1
@@ -142,6 +147,8 @@ for i in range(0, pygame.joystick.get_count()):
 if (not controller_exists):
     print("No " + controller_name + " Connected")
     exit(1)
+else:
+    print(controller_name + " Connected")
 
 # The following flag is used to exit our infinite control reading loop.
 done = False
