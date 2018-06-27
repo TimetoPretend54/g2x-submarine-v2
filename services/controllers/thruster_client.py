@@ -39,23 +39,23 @@ controller_exists = 0
 # and Raspian
 AXIS_MAP = None
 
+# Set of supported controller names (right now only PS4 Controller, Mac/Windows: Wireless Controller, Linux: Sony Computer...)
+valid_names = set(["Sony Computer Entertainment Wireless Controller", "Wireless Controller"])
+
 if platform.system() == "Linux":
-    controller_name = "Sony Computer Entertainment Wireless Controller"
     if platform.release() == "4.13.0-45-generic":
         pass
         # AXIS_Map --> fill in later
     else:
         AXIS_MAP = [0, 1, 2, 4, 5, 3]
 elif platform.system() == "Windows":
-    controller_name = "Wireless Controller"
     AXIS_MAP = [0, 1, 2, 3, 5, 4]
-elif platform.system() == "Darwin":     
-    controller_name = "Wireless Controller"
-    # NOTE that Darwin (macOS) comes in, in the expected order
 else:
     print(platform.system() + " is not supported")
     exit(1)
 # TO DO: Need Mac OS Elif before this else statement! Help from Kevin?
+
+# NOTE that Darwin comes in, in the expected order
 
 # This is the IP address and port of the server we will connect to. We send
 # controller values to that machine over the network.
@@ -133,22 +133,21 @@ atexit.register(close_socket)
 pygame.init()
 pygame.joystick.init()
 
-# Create joystick dictionary
-joysticks = dict()
+n = 0
 
 # Enumerate through joysticks to make sure we are using PS4 Controller
 for i in range(0, pygame.joystick.get_count()):
-    joysticks[pygame.joystick.Joystick(i).get_name()] = i
-    if controller_name in joysticks:
+    if pygame.joystick.Joystick(i).get_name() in valid_names:
         stick = pygame.joystick.Joystick(i)
         stick.init()
+        n = i
         controller_exists = 1
 
 if (not controller_exists):
-    print("No " + controller_name + " Connected")
+    print("No Supported Controller Connected")
     exit(1)
 else:
-    print(controller_name + " Connected")
+    print(pygame.joystick.Joystick(n).get_name() + " Connected")
 
 # The following flag is used to exit our infinite control reading loop.
 done = False
