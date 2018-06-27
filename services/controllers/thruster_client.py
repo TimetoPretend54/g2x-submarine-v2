@@ -39,6 +39,9 @@ controller_exists = 0
 # and Raspian
 AXIS_MAP = None
 
+# Variable to hold index of found supported joycon
+supported_joycon = 0
+
 # Set of supported controller names (right now only PS4 Controller, Mac/Windows: Wireless Controller, Linux: Sony Computer...)
 valid_names = set(["Sony Computer Entertainment Wireless Controller", "Wireless Controller"])
 
@@ -133,21 +136,19 @@ atexit.register(close_socket)
 pygame.init()
 pygame.joystick.init()
 
-n = 0
-
 # Enumerate through joysticks to make sure we are using PS4 Controller
 for i in range(0, pygame.joystick.get_count()):
     if pygame.joystick.Joystick(i).get_name() in valid_names:
         stick = pygame.joystick.Joystick(i)
         stick.init()
-        n = i
+        supported_joycon = i
         controller_exists = 1
 
 if (not controller_exists):
     print("No Supported Controller Connected")
     exit(1)
 else:
-    print(pygame.joystick.Joystick(n).get_name() + " Connected")
+    print(pygame.joystick.Joystick(supported_joycon).get_name() + " Connected")
 
 # The following flag is used to exit our infinite control reading loop.
 done = False
