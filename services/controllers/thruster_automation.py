@@ -13,7 +13,7 @@ JL_V = 1  # left joystick vertical axis
 JR_H = 2  # right joystick horizontal axis
 JR_V = 3  # right joystick vertical axis
 
-HOST = "192.168.0.1"
+HOST = "192.168.0.212"
 PORT = 9999
 
 TICK = 1.0 / 60.0
@@ -41,7 +41,7 @@ def send_message(controller, type, index, value):
     elif type == BUTTON:
         print("Setting button {} to {}".format(index, value))
 
-    s.send(bytes(m))
+    s.send(m.byte_convert())
 
     response = s.recv(1024)
     decoded_response = response.decode('ascii')

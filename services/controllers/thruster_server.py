@@ -7,7 +7,7 @@ import socket
 import atexit
 import _thread
 from input_types import MOTOR, AXIS, BUTTON
-from message import Message
+from message_3 import Message
 from thruster_controller import ThrusterController
 
 

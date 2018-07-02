@@ -63,7 +63,7 @@ else:
 # This is the IP address and port of the server we will connect to. We send
 # controller values to that machine over the network.
 #host = "192.168.2.1"
-host = "192.168.0.207"
+host = "192.168.0.212"
 port = 9999
 
 # process command line args
@@ -109,7 +109,11 @@ def send_message(controller, type, index, value):
     m.input_value = value
 
     # convert the message to a byte array and send it to the server
-    s.send(bytes(m))
+    s.send(m.byte_convert())
+
+    #print ('HELLO')
+    #print ((repr("%s" % m.byte_convert())))
+    #print ('DONE')
 
     # We wait for a response from the server to acknowledge it was received.
     # Note that in order to make this code more robust, we should use some sort
@@ -199,4 +203,8 @@ while done is False:
 
         # if we got a new value, then send it to the server
         if value is not None:
+            if type == BUTTON:
+                print ("Setting button {} to {}".format(index, value))
+            if type == AXIS:
+                print ("Setting axis {} to {}".format(index, value))
             send_message(controller, type, index, value)
