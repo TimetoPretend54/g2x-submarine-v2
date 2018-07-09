@@ -47,13 +47,6 @@ supported_joycon = 0
 # Set of supported controller names (right now only PS4 Controller, Mac/Windows: Wireless Controller, Linux: Sony Computer...)
 valid_names = set(["Sony Computer Entertainment Wireless Controller", "Wireless Controller"])
 
-release = platform.release()[0:4]
-print (release)
-print (type(release))
-release2 = float(release)
-print (type(release2))
-print (release2)
-
 # Try/Except is used as a "hack" solution to check that the user has 4.10+ or higher
 # For the linux kernel, so instead of trying to convert platform.release() into a 
 # number and try to do less than conditionals, I know that converting the string
@@ -125,10 +118,6 @@ def send_message(controller, type, index, value):
 
     # convert the message to a byte array and send it to the server
     s.send(m.byte_convert())
-
-    #print ('HELLO')
-    #print ((repr("%s" % m.byte_convert())))
-    #print ('DONE')
 
     # We wait for a response from the server to acknowledge it was received.
     # Note that in order to make this code more robust, we should use some sort
@@ -224,10 +213,4 @@ while done is False:
 
         # if we got a new value, then send it to the server
         if value is not None:
-            if not(value < -.001 and value > -.001):
-                if type == BUTTON:
-                    print ("Setting button {} to {}".format(index, value))
-                if type == AXIS:
-                    #print (event.axis, end='')
-                    print ("Setting axis {} to {}".format(index, value))
             send_message(controller, type, index, value)

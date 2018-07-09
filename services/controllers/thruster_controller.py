@@ -235,32 +235,32 @@ class ThrusterController:
             if self.j1.x != value:
                 self.j1.x = value
                 update_horizontal_thrusters = True
-                axis2 = "JL_H"
+                axis_name = "JL_H"
         elif axis == JL_V:
             if self.j1.y != value:
                 self.j1.y = value
                 update_horizontal_thrusters = True
-                axis2 = "JL_V"
+                axis_name = "JL_V"
         elif axis == JR_H:
             if self.j2.x != value:
                 self.j2.x = value
                 update_vertical_thrusters = True
-                axis2 = "JR_H"
+                axis_name = "JR_H"
         elif axis == JR_V:
             if self.j2.y != value:
                 self.j2.y = value
                 update_vertical_thrusters = True
-                axis2 = "JR_V"
+                axis_name = "JR_V"
         elif axis == AL:
             if self.descent != value:
                 self.descent = value
                 update_vertical_thrusters = True
-                axis2 = "L2"
+                axis_name = "L2"
         elif axis == AR:
             if self.ascent != value:
                 self.ascent = value
                 update_vertical_thrusters = True
-                axis2 = "R2"
+                axis_name = "R2"
         else:
             pass
             # print("unknown axis ", event.axis)
@@ -268,7 +268,6 @@ class ThrusterController:
         # updating horizontal thrusters is easy: find current angle, convert
         # angle to thruster values, apply values
         if update_horizontal_thrusters:
-            print ("Test2: Setting axis {} to {}".format(axis2, value))
             left_value = self.horizontal_left.valueAtIndex(self.j1.angle)
             right_value = self.horizontal_right.valueAtIndex(self.j1.angle)
             power = min(1.0, self.j1.length)
@@ -280,7 +279,6 @@ class ThrusterController:
         # thrust. As mentioned above, we have to be careful to stay within our
         # [-1,1] interval.
         if update_vertical_thrusters:
-            print ("Test: Setting axis {} to {}".format(axis2, value))
             power = min(1.0, self.j2.length)
             back_value = self.vertical_center.valueAtIndex(self.j2.angle) * power
             front_left_value = self.vertical_left.valueAtIndex(self.j2.angle) * power
@@ -299,7 +297,6 @@ class ThrusterController:
                 # back_value -= max_adjust
                 front_left_value -= max_adjust
                 front_right_value -= max_adjust
-            #print ("Back: {}, Front_Left: {}, Front_Right: {}".format(back_value, front_left_value, front_right_value))
             self.set_motor(VC, back_value)
             self.set_motor(VL, front_left_value)
             self.set_motor(VR, front_right_value)
@@ -313,7 +310,7 @@ class ThrusterController:
             self.light = 0.0
 
         light_value = map_range(self.light, 0.0, 1.0, -1.0, 1.0)
-        print("button %s, light = %s, light_value = %s" % (button, self.light, light_value))
+        # print("button %s, light = %s, light_value = %s" % (button, self.light, light_value))
         self.set_motor(LIGHT, light_value)
 
     def set_motor(self, motor_number, value):

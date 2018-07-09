@@ -86,16 +86,16 @@ def process_message(msg):
     m = Message(msg)
 
     if m.input_type == MOTOR:
-        # if VERBOSE:
-        #     print("Setting motor {} to {}".format(m.input_index, m.input_value))
+        if VERBOSE:
+            print("Setting motor {} to {}".format(m.input_index, m.input_value))
         controller.set_motor(m.input_index, m.input_value)
     elif m.input_type == BUTTON:
-        # if VERBOSE:
-        #     print("Setting button {} to {}".format(m.input_index, m.input_value))
+        if VERBOSE:
+            print("Setting button {} to {}".format(m.input_index, m.input_value))
         controller.update_button(m.input_index, m.input_value)
     elif m.input_type == AXIS:
-        # if VERBOSE:
-        #     print("Setting axis {} to {}".format(m.input_index, m.input_value))
+        if VERBOSE:
+            print("Setting axis {} to {}".format(m.input_index, m.input_value))
         controller.update_axis(m.input_index, m.input_value)
 
 
