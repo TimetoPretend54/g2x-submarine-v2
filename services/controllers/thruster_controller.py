@@ -177,6 +177,15 @@ class ThrusterController:
 
         print ('off')
 
+    def turn_off_motors(self):
+        self.set_motor(HL, 0.0)
+        self.set_motor(VL, 0.0)
+        self.set_motor(VC, 0.0)
+        self.set_motor(VL, 0.0)
+        self.set_motor(HR, 0.0)
+
+        print ('off')
+
     def update_axis(self, axis, value):
         '''
         This is the main method of this class. It is responsible for taking an
@@ -300,6 +309,7 @@ class ThrusterController:
             self.set_motor(VC, back_value)
             self.set_motor(VL, front_left_value)
             self.set_motor(VR, front_right_value)
+            print("setting motor 5 {0} to {1}".format(axis, value))
 
     def update_button(self, button, value):
         if button == UP:
@@ -319,7 +329,7 @@ class ThrusterController:
             value = self.apply_sensitivity(value)
             pwm_value = int(map_range(value, -1.0, 1.0, FULL_REVERSE, FULL_FORWARD))
 
-            # print("setting motor {0} to {1}".format(motor_number, pwm_value))
+            print("setting motor {0} to {1}".format(motor_number, pwm_value))
             motor.off = pwm_value
 
     def apply_sensitivity(self, value):

@@ -104,6 +104,7 @@ async def websocket_loop(websocket, path):
         msg = await websocket.recv()
 
         if len(msg) == 0:
+            controller.turn_off_motors()
             print("disconnecting client")
             break
         else:
