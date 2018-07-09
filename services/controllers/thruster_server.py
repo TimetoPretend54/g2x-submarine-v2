@@ -105,7 +105,7 @@ async def websocket_loop(websocket, path):
 
         if len(msg) == 0:
             controller.turn_off_motors()
-            print("disconnecting client")
+            print("disconnecting client\n   shutting down thrusters...")
             break
         else: 
             process_message(msg)
@@ -140,7 +140,7 @@ def on_new_client(controller, clientsocket, addr):
 
         if msg == b'':
             controller.turn_off_motors()
-            print("disconnecting client")
+            print("disconnecting client\n   shutting down thrusters...")
             break
         else:
             process_message(msg)
@@ -187,14 +187,18 @@ if SOCKETS:
 
     print("Thruster server bound to {}:{}".format(HOST, CONTROLLER_PORT))
 
-    while True:
-        # wait for an incoming connection
-        c, addr = s.accept()
+    try:
+        while True:
+            # wait for an incoming connection
+            c, addr = s.accept()
 
-        # show some feedback on who connected
-        print('Got connection from', addr)
+            # show some feedback on who connected
+            print('Got connection from', addr)
 
-        # start a new thread to handle the connection. This prevents this thread
-        # from hanging so it can process any other new connections that might
-        # come in
-        _thread.start_new_thread(on_new_client, (controller, c, addr))
+            # start a new thread to handle the connection. This prevents this thread
+            # from hanging so it can process any other new connections that might
+            # come in
+            _thread.start_new_thread(on_new_client, (controller, c, addr))
+    except KeyboardInterrupt:
+        controller.turn_off_motors()
+        print ("Ctl-C Interupt - Shutting Down Thrusters...")
