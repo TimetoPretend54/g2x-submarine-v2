@@ -39,8 +39,8 @@ JL_H = 0  # left joystick horizontal axis
 JL_V = 1  # left joystick vertical axis
 JR_H = 2  # right joystick horizontal axis
 JR_V = 3  # right joystick vertical axis
-AL = 4    # left analog button
-AR = 5    # right analog button
+AL = 4    # left analog button (L2)
+AR = 5    # right analog button (R2)
 UP = 3
 DOWN = 1
 RESET = 0
@@ -175,6 +175,8 @@ class ThrusterController:
         self.set_motor(VL, 0.0)
         self.set_motor(HR, 0.0)
 
+        print ('off')
+
     def update_axis(self, axis, value):
         '''
         This is the main method of this class. It is responsible for taking an
@@ -182,7 +184,7 @@ class ThrusterController:
         converting that into the appropriate thrust values for the appropriate
         thrusters associated with that axis.
 
-        For the two joysticks, we convert the joystick position into an angle.
+        For the twpro joysticks, we convert the joystick position into an angle.
         We know which thrusters each joystick controls, so we feed the
         calculated angle into the thruster interpolators for that joystick. This
         gives us the new thruster value for each thruster, which we then apply
@@ -233,26 +235,32 @@ class ThrusterController:
             if self.j1.x != value:
                 self.j1.x = value
                 update_horizontal_thrusters = True
+                axis_name = "JL_H"
         elif axis == JL_V:
             if self.j1.y != value:
                 self.j1.y = value
                 update_horizontal_thrusters = True
+                axis_name = "JL_V"
         elif axis == JR_H:
             if self.j2.x != value:
                 self.j2.x = value
                 update_vertical_thrusters = True
+                axis_name = "JR_H"
         elif axis == JR_V:
             if self.j2.y != value:
                 self.j2.y = value
                 update_vertical_thrusters = True
+                axis_name = "JR_V"
         elif axis == AL:
             if self.descent != value:
                 self.descent = value
                 update_vertical_thrusters = True
+                axis_name = "L2"
         elif axis == AR:
             if self.ascent != value:
                 self.ascent = value
                 update_vertical_thrusters = True
+                axis_name = "R2"
         else:
             pass
             # print("unknown axis ", event.axis)
@@ -302,7 +310,7 @@ class ThrusterController:
             self.light = 0.0
 
         light_value = map_range(self.light, 0.0, 1.0, -1.0, 1.0)
-        print("button %s, light = %s, light_value = %s" % (button, self.light, light_value))
+        # print("button %s, light = %s, light_value = %s" % (button, self.light, light_value))
         self.set_motor(LIGHT, light_value)
 
     def set_motor(self, motor_number, value):

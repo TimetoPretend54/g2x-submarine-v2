@@ -36,8 +36,10 @@ controller_exists = 0
 # NOTE: For some reason the same controller does not return the same axes
 # numbers on macOS and Raspian, so we adjust these constants per OS so that the
 # server will get consistent axis numbers. This has only been tested on macOS
-# and Raspian
+# and Raspian 
+# Additional NOTE: Same controller doesn't return same button on kenel 4.10+
 AXIS_MAP = None
+BUTTON_MAP = None
 
 # Variable to hold index of found supported joycon
 supported_joycon = 0
@@ -45,11 +47,17 @@ supported_joycon = 0
 # Set of supported controller names (right now only PS4 Controller, Mac/Windows: Wireless Controller, Linux: Sony Computer...)
 valid_names = set(["Sony Computer Entertainment Wireless Controller", "Wireless Controller"])
 
+# Try/Except is used as a "hack" solution to check that the user has 4.10+ or higher
+# For the linux kernel, so instead of trying to convert platform.release() into a 
+# number and try to do less than conditionals, I know that converting the string
+# when it is 4.10 is of length 4, but anything lower is valid only of length 3 (ex: 4.4.)
+# Because if I try to convert "4.4." to float I get an error, but not with "4.10"
 if platform.system() == "Linux":
-    if platform.release() == "4.13.0-45-generic":
-        pass
-        # AXIS_Map --> fill in later
-    else:
+    try:
+        release = float(platform.release()[0:4])
+        AXIS_MAP = [0, 1, 4, 3, 2, 5]
+        BUTTON_MAP = [1, 2, 3, 0, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+    except:
         AXIS_MAP = [0, 1, 2, 4, 5, 3]
 elif platform.system() == "Windows":
     AXIS_MAP = [0, 1, 2, 3, 5, 4]
@@ -63,7 +71,7 @@ else:
 # This is the IP address and port of the server we will connect to. We send
 # controller values to that machine over the network.
 #host = "192.168.2.1"
-host = "192.168.0.207"
+host = "192.168.0.212"
 port = 9999
 
 # process command line args
@@ -109,7 +117,7 @@ def send_message(controller, type, index, value):
     m.input_value = value
 
     # convert the message to a byte array and send it to the server
-    s.send(bytes(m))
+    s.send(m.byte_convert())
 
     # We wait for a response from the server to acknowledge it was received.
     # Note that in order to make this code more robust, we should use some sort
@@ -190,12 +198,18 @@ while done is False:
             value = round(event.value, PRECISION)
         elif event.type == pygame.JOYBUTTONDOWN:
             type = BUTTON
-            index = event.button
             value = 1
+            if BUTTON_MAP is not None:
+                index = BUTTON_MAP[event.button]
+            else:
+                index = event.button
         elif event.type == pygame.JOYBUTTONUP:
             type = BUTTON
-            index = event.button
             value = 0
+            if BUTTON_MAP is not None:
+                index = BUTTON_MAP[event.button]
+            else:
+                index = event.button
 
         # if we got a new value, then send it to the server
         if value is not None:
