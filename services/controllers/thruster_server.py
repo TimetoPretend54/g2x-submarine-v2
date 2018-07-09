@@ -107,7 +107,7 @@ async def websocket_loop(websocket, path):
             controller.turn_off_motors()
             print("disconnecting client")
             break
-        else:
+        else: 
             process_message(msg)
 
         await websocket.send("OK")
@@ -139,6 +139,7 @@ def on_new_client(controller, clientsocket, addr):
         msg = clientsocket.recv(1024)
 
         if msg == b'':
+            controller.turn_off_motors()
             print("disconnecting client")
             break
         else:
