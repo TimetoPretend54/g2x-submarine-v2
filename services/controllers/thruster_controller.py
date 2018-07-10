@@ -309,7 +309,6 @@ class ThrusterController:
             self.set_motor(VC, back_value)
             self.set_motor(VL, front_left_value)
             self.set_motor(VR, front_right_value)
-            print("setting motor 5 {0} to {1}".format(axis, value))
 
     def update_button(self, button, value):
         if button == UP:
@@ -329,7 +328,7 @@ class ThrusterController:
             value = self.apply_sensitivity(value)
             pwm_value = int(map_range(value, -1.0, 1.0, FULL_REVERSE, FULL_FORWARD))
 
-            print("setting motor {0} to {1}".format(motor_number, pwm_value))
+            # print("setting motor {0} to {1}".format(motor_number, pwm_value))
             motor.off = pwm_value
 
     def apply_sensitivity(self, value):
