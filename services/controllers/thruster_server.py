@@ -182,8 +182,6 @@ if WEBSOCKETS:
 # Start listening on a socket
 if SOCKETS:
 
-    global turn_off
-
     # Create a socket to listen for incoming connections
     s = socket.socket()
 
