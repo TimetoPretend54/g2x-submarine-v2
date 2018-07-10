@@ -184,8 +184,6 @@ class ThrusterController:
         self.set_motor(VR, 0.0)
         self.set_motor(HR, 0.0)
 
-        print ('off')
-
     def update_axis(self, axis, value):
         '''
         This is the main method of this class. It is responsible for taking an
