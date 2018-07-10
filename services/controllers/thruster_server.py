@@ -210,6 +210,7 @@ if SOCKETS:
             # come in
             _thread.start_new_thread(on_new_client, (controller, c, addr))
     except KeyboardInterrupt:
+        print ("Ctl-C Interupt - Shutting Down Thrusters...")
         turn_off = 1
         time.sleep(1)
-        print ("Ctl-C Interupt - Shutting Down Thrusters...")
+        print ("Thrusters Shut Down - Exiting...")
