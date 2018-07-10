@@ -172,10 +172,17 @@ class ThrusterController:
         self.set_motor(HL, 0.0)
         self.set_motor(VL, 0.0)
         self.set_motor(VC, 0.0)
-        self.set_motor(VL, 0.0)
+        self.set_motor(VR, 0.0)
         self.set_motor(HR, 0.0)
 
         print ('off')
+
+    def turn_off_motors(self):
+        self.set_motor(HL, 0.0)
+        self.set_motor(VL, 0.0)
+        self.set_motor(VC, 0.0)
+        self.set_motor(VR, 0.0)
+        self.set_motor(HR, 0.0)
 
     def update_axis(self, axis, value):
         '''

@@ -6,6 +6,7 @@ import websockets
 import socket
 import atexit
 import _thread
+import time
 from input_types import MOTOR, AXIS, BUTTON
 from message_3 import Message
 from thruster_controller import ThrusterController
@@ -24,6 +25,8 @@ HOST = "0.0.0.0"
 CONTROLLER_PORT = 9999
 CALIBRATION_PORT = 9998
 WEBSOCKETS_PORT = 9997
+
+turn_off = 0
 
 # process command line args
 for i in range(1, len(sys.argv)):
@@ -104,9 +107,10 @@ async def websocket_loop(websocket, path):
         msg = await websocket.recv()
 
         if len(msg) == 0:
-            print("disconnecting client")
+            controller.turn_off_motors()
+            print("disconnecting client\n   shutting down thrusters...")
             break
-        else:
+        else: 
             process_message(msg)
 
         await websocket.send("OK")
@@ -134,11 +138,18 @@ def on_new_client(controller, clientsocket, addr):
     the client are compatible. This implies that our responses need to grow in
     complexity.
     '''
+    global turn_off
+
     while True:
+
         msg = clientsocket.recv(1024)
 
-        if msg == b'':
-            print("disconnecting client")
+        if (turn_off):
+            controller.turn_off_motors()
+            exit(0)
+        elif msg == b'':
+            controller.turn_off_motors()
+            print("disconnecting client\n   shutting down thrusters...")
             break
         else:
             process_message(msg)
@@ -170,6 +181,7 @@ if WEBSOCKETS:
 
 # Start listening on a socket
 if SOCKETS:
+
     # Create a socket to listen for incoming connections
     s = socket.socket()
 
@@ -185,14 +197,20 @@ if SOCKETS:
 
     print("Thruster server bound to {}:{}".format(HOST, CONTROLLER_PORT))
 
-    while True:
-        # wait for an incoming connection
-        c, addr = s.accept()
+    try:
+        while True:
+            # wait for an incoming connection
+            c, addr = s.accept()
 
-        # show some feedback on who connected
-        print('Got connection from', addr)
+            # show some feedback on who connected
+            print('Got connection from', addr)
 
-        # start a new thread to handle the connection. This prevents this thread
-        # from hanging so it can process any other new connections that might
-        # come in
-        _thread.start_new_thread(on_new_client, (controller, c, addr))
+            # start a new thread to handle the connection. This prevents this thread
+            # from hanging so it can process any other new connections that might
+            # come in
+            _thread.start_new_thread(on_new_client, (controller, c, addr))
+    except KeyboardInterrupt:
+        print ("Ctl-C Interupt - Shutting Down Thrusters...")
+        turn_off = 1
+        time.sleep(1)
+        print ("Thrusters Shut Down - Exiting...")
