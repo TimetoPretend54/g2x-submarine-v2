@@ -6,6 +6,7 @@ import websockets
 import socket
 import atexit
 import _thread
+import time
 from input_types import MOTOR, AXIS, BUTTON
 from message_3 import Message
 from thruster_controller import ThrusterController
@@ -137,13 +138,16 @@ def on_new_client(controller, clientsocket, addr):
     the client are compatible. This implies that our responses need to grow in
     complexity.
     '''
+    global turn_off
+
     while True:
-        if (turn_off):
-            controller.turn_off_motors()
 
         msg = clientsocket.recv(1024)
 
-        if msg == b'':
+        if (turn_off):
+            controller.turn_off_motors()
+            exit(0)
+        elif msg == b'':
             controller.turn_off_motors()
             print("disconnecting client\n   shutting down thrusters...")
             break
@@ -177,6 +181,9 @@ if WEBSOCKETS:
 
 # Start listening on a socket
 if SOCKETS:
+
+    global turn_off
+
     # Create a socket to listen for incoming connections
     s = socket.socket()
 
@@ -206,5 +213,5 @@ if SOCKETS:
             _thread.start_new_thread(on_new_client, (controller, c, addr))
     except KeyboardInterrupt:
         turn_off = 1
-        controller.turn_off_motors()
+        time.sleep(1)
         print ("Ctl-C Interupt - Shutting Down Thrusters...")
